@@ -1,15 +1,25 @@
 import string
+from dto import User, Comment, Issue, Comment
+from connection import _Connection
 
 
-def register_user(username, password): pass
+def register_user(conn, username, password):
+    conn.users.insert(User(username, password))
 
-def unregister(username, password): pass
+def unregister_user(conn, username, password):
+    conn.users.delete(User(username, password))
 
-def udpate_password(username, password):pass
+def update_password(conn, username, password):
+    conn.users.update(User(username, password))
 
-def user_exists(username): pass
+def user_exists(conn, username):
+    if conn.users.get(User(username, "")) == null:
+        return -1
+    else:
+        return 0
 
-def register_company(name, password): pass #return company id
+def register_company(conn, name, password):
+    conn.companies.insert
 
 def unregister_company(name, password): pass
 
@@ -23,7 +33,7 @@ def submit_annonymus_issue(title, content, labels): pass #return issue_id
 
 def submit_registered_issue(title, content, labels, username): pass #return issue_id
 
-def delet_issue(issue_id): pass
+def delete_issue(issue_id): pass
 
 def is_signin_valid(username, password): pass
 

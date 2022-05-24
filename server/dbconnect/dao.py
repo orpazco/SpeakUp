@@ -20,11 +20,18 @@ class _Users:
         UPDATE users SET password=(%s) WHERE username=(%s)
         """, [user.password, user.username])
 
-    def get(self, user):
+    def get(self, username):
         conn = self._connect.cursor()
         conn.execute("""
         SELECT * FROM users WHERE username=(%s)
-        """, [user.username])
+        """, [username])
+        return User(*conn.fetchone())
+
+    def authenticate(self, user):
+        conn = self._connect.cursor()
+        conn.execute("""
+        SELECT * FROM users WHERE username=(%s) AND password = (%s)
+        """, [user.username, user.password])
         return User(*conn.fetchone())
 
 
@@ -41,16 +48,16 @@ class _Companies:
         """, [company.name, company.password])
         return str(*conn.fetchone())
 
-    def delete(self, company):
+    def delete(self, company_name):
         self._connect.execute("""
-        DELETE FROM companies WHERE username=(%s) and password=(%s)
-        """, [company.username, company.password])
+        DELETE FROM companies WHERE name=(%s)
+        """, [company_name])
 
-    def get_labels(self, company):
+    def get_labels(self, company_name):
         conn = self._connect.cursor()
         conn.execute("""
         SELECT labels FROM companies WHERE name = (%s)
-        """, [company.name])
+        """, [company_name])
         return list(*conn.fetchone())
 
     def add_labels(self, company):
@@ -58,16 +65,16 @@ class _Companies:
         UPDATE companies SET labels || (%s) WHERE name=(%s)
         """, [company.labels, company.name])
 
-    def update_labels_after_remove(self, company):
+    def update_labels_after_remove(self, company_name):
         self._connect.execute("""
         UPDATE companies SET labels = (%s) WHERE name=(%s)
-        """, [company.labes, company.name])
+        """, [company_name])
     
-    def get_all_by_label(self, company):
+    def get_all_by_label(self, label):
         conn = self._connect.cursor()
         conn.execute("""
         SELECT name WHERE (%s) IN labels
-        """, company.labels)
+        """, [label])
         return list(*conn.fetchall())
 
 class _Issues:
@@ -83,10 +90,10 @@ class _Issues:
         """, [issue.date, issue.title, issue.content, issue.labels, issue.is_annonymus, issue.user_id])
         return str(*conn.fetchone())
 
-    def delete(self, issue):
+    def delete(self, issue_id):
         self._connect.execute("""
         DELETE FROM issues WHERE id=(%s)
-        """, [issue.id])
+        """, [issue_id])
 
 class _Comments:
     def __init__(self, connect):

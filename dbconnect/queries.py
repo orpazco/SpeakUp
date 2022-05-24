@@ -13,10 +13,10 @@ def update_password(conn, username, password):
     conn.users.update(User(username, password))
 
 def user_exists(conn, username):
-    if conn.users.get(User(username, "")) == null:
-        return -1
+    if conn.users.get(User(username, "")) == None:
+        return False
     else:
-        return 0
+        return True
 
 def register_company(conn, name, password):
     conn.companies.insert
